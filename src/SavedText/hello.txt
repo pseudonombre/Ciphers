@@ -1,0 +1,1 @@
+hello, world! This is sample text which does contain some duplicate words. For example, is appears three times. This is intentional and should be used as a test of some functions.
