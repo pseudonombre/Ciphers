@@ -5,11 +5,15 @@ import java.util.*;
 import java.util.function.BiFunction;
 
 import Modules.*;
+import Modules.Utils.InputParsingTest;
 
 public class Main{
     private static final Path SAVED_TEXT_DIR = Path.of("src", "SavedText");
     // Module takes: input string, arguments
-    private static final Map<String, BiFunction<String, String[], String>> MODULES =
+//    private static final Map<String, BiFunction<String, String[], String>> MODULES =
+//            new HashMap<>();
+
+    private static final Map<String, BiFunction<String, String, String>> MODULES =
             new HashMap<>();
     static String cws = "";
 
@@ -60,54 +64,59 @@ public class Main{
     }
 
     private static void loadModules(){
-        MODULES.put("echo", (input, moduleArgs) -> input);
-        MODULES.put("group", GroupChars::function);
-        MODULES.put("remws", (input, moduleArgs) -> input.replaceAll("\s+", ""));
-        MODULES.put("removewhitespace", (input, moduleArgs) -> input.replaceAll("\s+", ""));
-        MODULES.put("freqa", FreqAnalysis::function);
-        MODULES.put("ic", IC::function);
-        MODULES.put("cosetic", CosetIC::function);
-        MODULES.put("ceasarshift", CeasarShift::function);
-        MODULES.put("cs", CeasarShift::function);
-        MODULES.put("vigcoset", VigenereCosetShift::function);
-        MODULES.put("vigcosetshift", VigenereCosetShift::function);
-        MODULES.put("vigenerecosetshift", VigenereCosetShift::function);
-        MODULES.put("vigenere", Vigenere::function);
-        MODULES.put("veginere", Vigenere::function);
-        MODULES.put("vig", Vigenere::function);
-        MODULES.put("read", Read::function);
-        MODULES.put("write", Write::function);
+//        MODULES.put("echo", (input, moduleArgs) -> input);
+//        MODULES.put("group", GroupChars::function);
+//        MODULES.put("remws", (input, moduleArgs) -> input.replaceAll("\s+", ""));
+//        MODULES.put("removewhitespace", (input, moduleArgs) -> input.replaceAll("\s+", ""));
+//        MODULES.put("freqa", FreqAnalysis::function);
+//        MODULES.put("ic", IC::function);
+//        MODULES.put("cosetic", CosetIC::function);
+//        MODULES.put("ceasarshift", CeasarShift::function);
+//        MODULES.put("cs", CeasarShift::function);
+//        MODULES.put("vigcoset", VigenereCosetShift::function);
+//        MODULES.put("vigcosetshift", VigenereCosetShift::function);
+//        MODULES.put("vigenerecosetshift", VigenereCosetShift::function);
+//        MODULES.put("vigenere", Vigenere::function);
+//        MODULES.put("veginere", Vigenere::function);
+//        MODULES.put("vig", Vigenere::function);
+//        MODULES.put("read", Read::function);
+//        MODULES.put("write", Write::function);
+        MODULES.put("ipt", InputParsingTest::function);
     }
     private static void executeInstruction(String instruction) throws IOException {
-        String[] stages = instruction.split("\\|", -1);
-
-        if (stages.length == 0) {
-            throw new IllegalArgumentException(
-                    "Usage: <module> [arguments]"
-            );
-        }
-
-        for (int i = 0; i < stages.length; i++) {
-            String stage = stages[i].trim();
-
-            if (stage.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Empty command in pipeline"
-                );
-            }
-            //String[] parts = stage.split("\\s+");
-            String[] parts = splitKeepQuotes(stage);
-            String[] moduleArgs = new String[parts.length - 1];
-            System.arraycopy(parts, 1, moduleArgs, 0, moduleArgs.length);
-
-            cws = runModule(parts[0], cws, moduleArgs);
-        }
-
+//        String[] stages = instruction.split("\\|", -1);
+//
+//        if (stages.length == 0) {
+//            throw new IllegalArgumentException(
+//                    "Usage: <module> [arguments]"
+//            );
+//        }
+//
+//        for (int i = 0; i < stages.length; i++) {
+//            String stage = stages[i].trim();
+//
+//            if (stage.isEmpty()) {
+//                throw new IllegalArgumentException(
+//                        "Empty command in pipeline"
+//                );
+//            }
+//            //String[] parts = stage.split("\\s+");
+//            String[] parts = splitKeepQuotes(stage);
+//            String[] moduleArgs = new String[parts.length - 1];
+//            System.arraycopy(parts, 1, moduleArgs, 0, moduleArgs.length);
+//
+//            cws = runModule(parts[0], cws, moduleArgs);
+        cws = runModule(instruction.substring(0, instruction.indexOf(" ")), cws, instruction.substring(instruction.indexOf(" ") + 1));
         System.out.println(cws);
-    }
+        }
 
-    private static String runModule(String moduleName, String input, String[] moduleArgs) {
-        BiFunction<String, String[], String> module = MODULES.get(moduleName.toLowerCase());
+
+    //}
+
+    private static String runModule(String moduleName, String input, String moduleArgs) {
+//    private static String runModule(String moduleName, String input, String[] moduleArgs) {
+        BiFunction<String, String, String> module = MODULES.get(moduleName.toLowerCase());
+//        BiFunction<String, String[], String> module = MODULES.get(moduleName.toLowerCase());
 
         if (module == null) {
             throw new IllegalArgumentException(

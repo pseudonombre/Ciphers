@@ -1,5 +1,6 @@
 package Modules;
 import Modules.Utils.InputParsing;
+import Modules.Utils.InputParsingUtils;
 
 public class Vigenere {
     public static String function(String input, String[] moduleArgs) {
@@ -12,7 +13,7 @@ public class Vigenere {
             throw new IllegalArgumentException("Key must contain at least one letter");
         }
 
-        boolean forward = InputParsing.parseBooleanArg(moduleArgs[1]);
+        boolean forward = InputParsingUtils.parseBoolean(moduleArgs[1]);
         StringBuilder transformedText = new StringBuilder();
         int keyIndex = 0;
 

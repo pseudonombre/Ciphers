@@ -9,7 +9,7 @@ public class Read {
     private static final Path SAVED_TEXT_DIR = Path.of("src", "SavedText");
 
     public static String function(String input, String[] moduleArgs) {//throws IOException {
-        input = moduleArgs[1];
+        input = moduleArgs[0];
         String lowerInput = input.toLowerCase();
 
         if (lowerInput.startsWith("text:") | lowerInput.startsWith("t:")) {
