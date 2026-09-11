@@ -10,7 +10,7 @@ public class IC {
     private static final double IC_RANDOM = 0.03847;
     private static final int IC_BAR_WIDTH = 50;
 
-    public static String function(String input, String[] moduleArgs) {
+    public static String function(String input, String argString) {
         double indexOfCoincidence = calculate(input);
 
         System.out.println("IC: " + indexOfCoincidence);

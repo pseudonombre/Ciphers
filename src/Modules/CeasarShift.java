@@ -1,15 +1,30 @@
 package Modules;
 
-public class CeasarShift {
-    public static String function(String input, String[] moduleArgs) {
-        if (moduleArgs.length != 2) {
-            throw new IllegalArgumentException("Usage: ceasarshift <shift letter|number> <reverse>");
-        }
+import Modules.Utils.InputParsing;
+import Modules.Utils.Tokenizer;
 
-        int shiftAmount = parseShiftAmount(moduleArgs[0]);
-        if (parseBooleanArg(moduleArgs[1])) {
+import static Modules.Utils.InputParsing.parse;
+
+public class CeasarShift {
+    public static String function(String input, String argString) {
+        String[] argTokens = Tokenizer.tokenize(argString).toArray(new String[0]);
+        InputParsing.Argument[] args = parse(argTokens,
+                new InputParsing.Argument[]
+                        { new InputParsing.Argument("shift", 's', String.class, null),
+                        new InputParsing.Argument("reverse", 'r', null, false) }
+        );
+//        if (moduleArgs.length != 2) {
+//            throw new IllegalArgumentException("Usage: ceasarshift <shift letter|number> <reverse>");
+//        }
+
+        int shiftAmount = parseShiftAmount((String) args[0].value);
+        if ((boolean) args[1].value) {
             shiftAmount = -shiftAmount;
         }
+//        int shiftAmount = parseShiftAmount(moduleArgs[0]);
+//        if (parseBooleanArg(moduleArgs[1])) {
+//            shiftAmount = -shiftAmount;
+//        }
 
         StringBuilder shiftedText = new StringBuilder();
 
@@ -26,14 +41,6 @@ public class CeasarShift {
         }
 
         return Integer.parseInt(value);
-    }
-
-    private static boolean parseBooleanArg(String value) {
-        String normalizedValue = value.toLowerCase();
-        return normalizedValue.equals("true")
-                || normalizedValue.equals("t")
-                || normalizedValue.equals("yes")
-                || normalizedValue.equals("y");
     }
 
     public static char shiftChar(char c, int shiftAmount) {

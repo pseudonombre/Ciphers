@@ -85,11 +85,11 @@ public class InputParsing {
     }
 
     public static class Argument {
-        String name;
-        char singleLetterCode;
-        Class<?> domain;
+        public String name;
+        public char singleLetterCode;
+        public Class<?> domain;
         // a null value for domain indicates a boolean flag taking no argument
-        Object value;
+        public Object value;
 
         public Argument(String c_name, char c_singleLetterCode, Class<?> c_domain, Object c_value) {
             this.name = c_name;

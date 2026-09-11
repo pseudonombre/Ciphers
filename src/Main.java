@@ -5,9 +5,8 @@ import java.util.*;
 import java.util.function.BiFunction;
 
 import Modules.*;
-import Modules.Utils.InputParsingTest;
 
-public class Main{
+public class Main {
     private static final Path SAVED_TEXT_DIR = Path.of("src", "SavedText");
     // Module takes: input string, arguments
 //    private static final Map<String, BiFunction<String, String[], String>> MODULES =
@@ -17,7 +16,7 @@ public class Main{
             new HashMap<>();
     static String cws = "";
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         // Module registration
@@ -35,14 +34,16 @@ public class Main{
                 break;
             }
             if (instruction.equalsIgnoreCase("mods")) {
-                for (String module : MODULES.keySet()){
+                for (String module : MODULES.keySet()) {
                     System.out.println(module);
                 }
                 continue;
             }
             if (instruction.equalsIgnoreCase("ls")) {
                 try (var files = Files.list(SAVED_TEXT_DIR)) {
-                    files.forEach((file) -> {System.out.println(file.subpath(file.getNameCount() - 1, file.getNameCount()));});
+                    files.forEach((file) -> {
+                        System.out.println(file.subpath(file.getNameCount() - 1, file.getNameCount()));
+                    });
                 } catch (IOException e) {
                     System.out.println(e);
                 }
@@ -63,26 +64,26 @@ public class Main{
         scanner.close();
     }
 
-    private static void loadModules(){
-//        MODULES.put("echo", (input, moduleArgs) -> input);
-//        MODULES.put("group", GroupChars::function);
-//        MODULES.put("remws", (input, moduleArgs) -> input.replaceAll("\s+", ""));
-//        MODULES.put("removewhitespace", (input, moduleArgs) -> input.replaceAll("\s+", ""));
-//        MODULES.put("freqa", FreqAnalysis::function);
-//        MODULES.put("ic", IC::function);
-//        MODULES.put("cosetic", CosetIC::function);
-//        MODULES.put("ceasarshift", CeasarShift::function);
-//        MODULES.put("cs", CeasarShift::function);
-//        MODULES.put("vigcoset", VigenereCosetShift::function);
-//        MODULES.put("vigcosetshift", VigenereCosetShift::function);
-//        MODULES.put("vigenerecosetshift", VigenereCosetShift::function);
-//        MODULES.put("vigenere", Vigenere::function);
-//        MODULES.put("veginere", Vigenere::function);
-//        MODULES.put("vig", Vigenere::function);
-//        MODULES.put("read", Read::function);
-//        MODULES.put("write", Write::function);
-        MODULES.put("ipt", InputParsingTest::function);
+    private static void loadModules() {
+        MODULES.put("echo", (input, argString) -> input);
+        MODULES.put("group", GroupChars::function);
+        MODULES.put("remws", (input, argString) -> input.replaceAll("\\s+", ""));
+        MODULES.put("removewhitespace", (input, argString) -> input.replaceAll("\\s+", ""));
+        MODULES.put("freqa", FreqAnalysis::function);
+        MODULES.put("ic", IC::function);
+        MODULES.put("cosetic", CosetIC::function);
+        MODULES.put("ceasarshift", CeasarShift::function);
+        MODULES.put("cs", CeasarShift::function);
+        MODULES.put("vigcoset", VigenereCosetShift::function);
+        MODULES.put("vigcosetshift", VigenereCosetShift::function);
+        MODULES.put("vigenerecosetshift", VigenereCosetShift::function);
+        MODULES.put("vigenere", Vigenere::function);
+        MODULES.put("veginere", Vigenere::function);
+        MODULES.put("vig", Vigenere::function);
+        MODULES.put("read", Read::function);
+        MODULES.put("write", Write::function);
     }
+
     private static void executeInstruction(String instruction) throws IOException {
 //        String[] stages = instruction.split("\\|", -1);
 //
@@ -106,9 +107,13 @@ public class Main{
 //            System.arraycopy(parts, 1, moduleArgs, 0, moduleArgs.length);
 //
 //            cws = runModule(parts[0], cws, moduleArgs);
-        cws = runModule(instruction.substring(0, instruction.indexOf(" ")), cws, instruction.substring(instruction.indexOf(" ") + 1));
-        System.out.println(cws);
+        if (instruction.indexOf(' ') == -1) {
+            cws = runModule(instruction, cws, "");
+        } else {
+            cws = runModule(instruction.substring(0, instruction.indexOf(" ")), cws, instruction.substring(instruction.indexOf(" ") + 1));
         }
+        System.out.println(cws);
+    }
 
 
     //}
@@ -125,30 +130,5 @@ public class Main{
         }
 
         return module.apply(input, moduleArgs);
-    }
-
-    private static String[] splitKeepQuotes(String input) {
-        List<String> result = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean inQuotes = false;
-
-        for (char c : input.toCharArray()) {
-            if (c == '"') {
-                inQuotes = !inQuotes;
-            } else if (Character.isWhitespace(c) && !inQuotes) {
-                if (current.length() > 0) {
-                    result.add(current.toString());
-                    current.setLength(0);
-                }
-            } else {
-                current.append(c);
-            }
-        }
-
-        if (current.length() > 0) {
-            result.add(current.toString());
-        }
-
-        return result.toArray(new String[0]);
     }
 }

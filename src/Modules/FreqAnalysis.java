@@ -2,9 +2,12 @@ package Modules;
 import java.util.HashMap;
 import java.util.Map;
 
+import Modules.Utils.InputParsing;
+import Modules.Utils.Tokenizer;
+
 public class FreqAnalysis {
 
-    public static String function(String input, String[] moduleArgs) {
+    public static String function(String input, String argString) {
         String res = input;
 //        String[] strings = input.split("\s+");
         Map<String, Integer> frequency = new HashMap<>();
@@ -36,11 +39,14 @@ public class FreqAnalysis {
                 .max()
                 .orElse(1);
 
-        int position = 0;
+        //int position = 0;
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < words.length; i++) {
             String s = words[i];
-            String d = delimiters.get(i);
+            String d = "";
+            if (i < delimiters.size()) {
+                d = delimiters.get(i);
+            }
             int count = frequency.get(s);
 
             int colorIndex = (int) ((count - 1) * (colors.length - 1)

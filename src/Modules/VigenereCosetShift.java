@@ -1,30 +1,58 @@
 package Modules;
 
+import Modules.Utils.InputParsing;
+import Modules.Utils.Tokenizer;
+
 import java.util.Arrays;
+
+import static Modules.Utils.InputParsing.parse;
 
 public class VigenereCosetShift {
     private static final int TOP_GUESS_COUNT = 3;
 
     private static final double[] ENGLISH_FREQUENCIES = {
-            8.167, 1.492, 2.782, 4.253, 12.702, 2.228, 2.015, 6.094, 6.966,
-            0.153, 0.772, 4.025, 2.406, 6.749, 7.507, 1.929, 0.095, 5.987,
-            6.327, 9.056, 2.758, 0.978, 2.360, 0.150, 1.974, 0.074
+            8.167, // A
+            1.492, // B
+            2.782, // C
+            4.253, // D
+            12.702, // E
+            2.228, // F
+            2.015, // G
+            6.094, // H
+            6.966, // I
+            0.153, // J
+            0.772, // K
+            4.025, // L
+            2.406, // M
+            6.749, // N
+            7.507, // O
+            1.929, // P
+            0.095, // Q
+            5.987, // R
+            6.327, // S
+            9.056, // T
+            2.758, // U
+            0.978, // V
+            2.360, // W
+            0.150, // X
+            1.974, // Y
+            0.074  // Z
     };
 
-    public static String function(String input, String[] moduleArgs) {
-        boolean verbose = false;
-        int keyLengthArgCount = moduleArgs.length;
+    public static String function(String input, String argString) {
+        String[] argTokens = Tokenizer.tokenize(argString).toArray(new String[0]);
+        InputParsing.Argument[] args = parse(argTokens,
+                new InputParsing.Argument[]
+                        { new InputParsing.Argument("keyLength", 'l', int.class, null),
+                                new InputParsing.Argument("verbose", 'v', null, false) }
+        );
 
-        if (moduleArgs.length > 0 && isBooleanArg(moduleArgs[moduleArgs.length - 1])) {
-            verbose = parseBooleanArg(moduleArgs[moduleArgs.length - 1]);
-            keyLengthArgCount--;
+        boolean verbose = (boolean) args[1].value;
+
+        int keyLength = (int) args[0].value;
+        if (keyLength < 1) {
+            throw new IllegalArgumentException("Key length must be at least 1");
         }
-
-        if (keyLengthArgCount != 1) {
-            throw new IllegalArgumentException("Usage: vigenerecosetshift <keyLength> [verbose]");
-        }
-
-        int keyLength = parseKeyLength(moduleArgs[0]);
         String filteredInput = filterInput(input);
         CosetShiftResult[] results = analyze(filteredInput, keyLength);
 
@@ -151,34 +179,6 @@ public class VigenereCosetShift {
         }
 
         return chiSquared;
-    }
-
-    private static int parseKeyLength(String value) {
-        int keyLength = Integer.parseInt(value);
-        if (keyLength < 1) {
-            throw new IllegalArgumentException("Key length must be at least 1");
-        }
-        return keyLength;
-    }
-
-    private static boolean isBooleanArg(String value) {
-        String normalizedValue = value.toLowerCase();
-        return normalizedValue.equals("true")
-                || normalizedValue.equals("t")
-                || normalizedValue.equals("yes")
-                || normalizedValue.equals("y")
-                || normalizedValue.equals("false")
-                || normalizedValue.equals("f")
-                || normalizedValue.equals("no")
-                || normalizedValue.equals("n");
-    }
-
-    private static boolean parseBooleanArg(String value) {
-        String normalizedValue = value.toLowerCase();
-        return normalizedValue.equals("true")
-                || normalizedValue.equals("t")
-                || normalizedValue.equals("yes")
-                || normalizedValue.equals("y");
     }
 
     private static String filterInput(String input) {

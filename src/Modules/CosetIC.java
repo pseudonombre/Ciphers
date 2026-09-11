@@ -1,11 +1,17 @@
 package Modules;
 
+import Modules.Utils.InputParsing;
+import Modules.Utils.Tokenizer;
+
+import javax.xml.crypto.dsig.spec.HMACParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 
+import static Modules.Utils.InputParsing.parse;
+
 public class CosetIC {
     private static final int DEFAULT_MIN_KEY_LENGTH = 1;
-    private static final int DEFAULT_MAX_KEY_LENGTH = 16;
+    private static final int DEFAULT_MAX_KEY_LENGTH = 20;
     private static final String RESET_COLOR = "\u001B[0m";
     private static final String[] COLORS = {
             "\u001B[34m", // blue
@@ -20,26 +26,46 @@ public class CosetIC {
             "\u001B[31m"  // red
     };
 
-    public static String function(String input, String[] moduleArgs) {
+    public static String function(String input, String argString) {
+        String[] argTokens = Tokenizer.tokenize(argString).toArray(new String[0]);
+        InputParsing.Argument[] args = parse(argTokens,
+                new InputParsing.Argument[]
+                        { new InputParsing.Argument("startLength", 's', int.class, null),
+                                new InputParsing.Argument("endLength", 'e', int.class, null),
+                                new InputParsing.Argument("verbose", 'v', null, false) }
+        );
+
         int minKeyLength = DEFAULT_MIN_KEY_LENGTH;
         int maxKeyLength = DEFAULT_MAX_KEY_LENGTH;
-        boolean verbose = false;
-        int keyLengthArgCount = moduleArgs.length;
-
-        if (moduleArgs.length > 0 && isBooleanArg(moduleArgs[moduleArgs.length - 1])) {
-            verbose = parseBooleanArg(moduleArgs[moduleArgs.length - 1]);
-            keyLengthArgCount--;
+        if (args[0].value != null){
+            minKeyLength = (int) args[0].value;
+            if (args[1].value != null) {
+                maxKeyLength = (int) args[1].value;
+            } else {
+                maxKeyLength = minKeyLength;
+            }
         }
+        boolean verbose = (boolean) args[2].value;
 
-        if (keyLengthArgCount == 1) {
-            minKeyLength = parseKeyLength(moduleArgs[0]);
-            maxKeyLength = minKeyLength;
-        } else if (keyLengthArgCount == 2) {
-            minKeyLength = parseKeyLength(moduleArgs[0]);
-            maxKeyLength = parseKeyLength(moduleArgs[1]);
-        } else if (keyLengthArgCount > 2) {
-            throw new IllegalArgumentException("Usage: cosetic [keyLength | minKeyLength maxKeyLength] [verbose]");
-        }
+//        int minKeyLength = DEFAULT_MIN_KEY_LENGTH;
+//        int maxKeyLength = DEFAULT_MAX_KEY_LENGTH;
+//        boolean verbose = false;
+//        int keyLengthArgCount = moduleArgs.length;
+//
+//        if (moduleArgs.length > 0 && isBooleanArg(moduleArgs[moduleArgs.length - 1])) {
+//            verbose = parseBooleanArg(moduleArgs[moduleArgs.length - 1]);
+//            keyLengthArgCount--;
+//        }
+//
+//        if (keyLengthArgCount == 1) {
+//            minKeyLength = parseKeyLength(moduleArgs[0]);
+//            maxKeyLength = minKeyLength;
+//        } else if (keyLengthArgCount == 2) {
+//            minKeyLength = parseKeyLength(moduleArgs[0]);
+//            maxKeyLength = parseKeyLength(moduleArgs[1]);
+//        } else if (keyLengthArgCount > 2) {
+//            throw new IllegalArgumentException("Usage: cosetic [keyLength | minKeyLength maxKeyLength] [verbose]");
+//        }
 
         if (minKeyLength > maxKeyLength) {
             int temp = minKeyLength;

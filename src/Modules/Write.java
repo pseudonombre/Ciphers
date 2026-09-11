@@ -1,5 +1,8 @@
 package Modules;
 
+import Modules.Utils.InputParsing;
+import Modules.Utils.Tokenizer;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,21 +12,27 @@ import java.nio.file.StandardOpenOption;
 public class Write {
 
     private static final Path SAVED_TEXT_DIR = Path.of("src", "SavedText");
-    public static String function(String input, String[] moduleArgs) {
-        if (moduleArgs.length < 1) {
+    public static String function(String input, String argString) {
+        String[] argTokens = Tokenizer.tokenize(argString).toArray(new String[0]);
+        InputParsing.Argument[] args = InputParsing.parse(argTokens,
+                new InputParsing.Argument[]
+                        { new InputParsing.Argument("file", 'f', String.class, null),
+                                new InputParsing.Argument("add", 'a', null, false) }
+        );
+
+        if (args[0].value == null){
             throw new IllegalArgumentException("A filename is required.");
         }
+        String filename = (String) args[0].value;
 
-        if (moduleArgs[0].indexOf('.') == -1) {
-            moduleArgs[0] += ".txt";
+        if (filename.indexOf('.') == -1) {
+            filename += ".txt";
         }
 
-        Path file = Paths.get(String.valueOf(SAVED_TEXT_DIR), moduleArgs[0]);
+        Path file = Paths.get(String.valueOf(SAVED_TEXT_DIR), filename);
 
 
-        boolean append = moduleArgs.length >= 2
-                && (moduleArgs[1].equalsIgnoreCase("add")
-                || moduleArgs[1].equalsIgnoreCase("a"));
+        boolean append = (boolean) args[1].value;
 
         try {
             if (append) {

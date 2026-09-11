@@ -1,19 +1,24 @@
 package Modules;
 import Modules.Utils.InputParsing;
 import Modules.Utils.InputParsingUtils;
+import Modules.Utils.Tokenizer;
 
 public class Vigenere {
-    public static String function(String input, String[] moduleArgs) {
-        if (moduleArgs.length != 2) {
-            throw new IllegalArgumentException("Usage: vigenere <key> <forward>");
-        }
+    public static String function(String input, String argString) {
+        String[] argTokens = Tokenizer.tokenize(argString).toArray(new String[0]);
+        InputParsing.Argument[] args = InputParsing.parse(argTokens,
+                new InputParsing.Argument[]
+                        { new InputParsing.Argument("key", 'k', String.class, null),
+                                new InputParsing.Argument("backward", 'b', null, false) }
+        );
 
-        String key = filterKey(moduleArgs[0]);
+        String key = (String) args[0].value;
+        key = key.toUpperCase();
         if (key.isEmpty()) {
             throw new IllegalArgumentException("Key must contain at least one letter");
         }
 
-        boolean forward = InputParsingUtils.parseBoolean(moduleArgs[1]);
+        boolean forward = !(boolean) args[1].value;
         StringBuilder transformedText = new StringBuilder();
         int keyIndex = 0;
 
