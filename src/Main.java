@@ -9,8 +9,6 @@ import Modules.*;
 public class Main {
     private static final Path SAVED_TEXT_DIR = Path.of("src", "SavedText");
     // Module takes: input string, arguments
-//    private static final Map<String, BiFunction<String, String[], String>> MODULES =
-//            new HashMap<>();
 
     private static final Map<String, BiFunction<String, String, String>> MODULES =
             new HashMap<>();
@@ -21,6 +19,13 @@ public class Main {
 
         // Module registration
         loadModules();
+        try {
+            Modules.Utils.PythonBridge.start();
+        } catch (Exception e){
+            System.out.println("An error occurred in loading the python server.\n" +
+                    "Some modules may be unavailable.\n" +
+                    "\tError: " + e);
+        }
 
         System.out.println("Welcome to CipherLab! (That's such a generic working name)");
 
@@ -80,33 +85,12 @@ public class Main {
         MODULES.put("vigenere", Vigenere::function);
         MODULES.put("veginere", Vigenere::function);
         MODULES.put("vig", Vigenere::function);
+        MODULES.put("sw", SplitWords::function);
         MODULES.put("read", Read::function);
         MODULES.put("write", Write::function);
     }
 
     private static void executeInstruction(String instruction) throws IOException {
-//        String[] stages = instruction.split("\\|", -1);
-//
-//        if (stages.length == 0) {
-//            throw new IllegalArgumentException(
-//                    "Usage: <module> [arguments]"
-//            );
-//        }
-//
-//        for (int i = 0; i < stages.length; i++) {
-//            String stage = stages[i].trim();
-//
-//            if (stage.isEmpty()) {
-//                throw new IllegalArgumentException(
-//                        "Empty command in pipeline"
-//                );
-//            }
-//            //String[] parts = stage.split("\\s+");
-//            String[] parts = splitKeepQuotes(stage);
-//            String[] moduleArgs = new String[parts.length - 1];
-//            System.arraycopy(parts, 1, moduleArgs, 0, moduleArgs.length);
-//
-//            cws = runModule(parts[0], cws, moduleArgs);
         if (instruction.indexOf(' ') == -1) {
             cws = runModule(instruction, cws, "");
         } else {
@@ -115,13 +99,8 @@ public class Main {
         System.out.println(cws);
     }
 
-
-    //}
-
     private static String runModule(String moduleName, String input, String moduleArgs) {
-//    private static String runModule(String moduleName, String input, String[] moduleArgs) {
         BiFunction<String, String, String> module = MODULES.get(moduleName.toLowerCase());
-//        BiFunction<String, String[], String> module = MODULES.get(moduleName.toLowerCase());
 
         if (module == null) {
             throw new IllegalArgumentException(
