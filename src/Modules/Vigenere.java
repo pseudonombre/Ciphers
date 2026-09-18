@@ -9,7 +9,7 @@ public class Vigenere {
         InputParsing.Argument[] args = InputParsing.parse(argTokens,
                 new InputParsing.Argument[]
                         { new InputParsing.Argument("key", 'k', String.class, null),
-                                new InputParsing.Argument("backward", 'b', null, false) }
+                                new InputParsing.Argument("decrypt", 'd', null, false) }
         );
 
         String key = (String) args[0].value;

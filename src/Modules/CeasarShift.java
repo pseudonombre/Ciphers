@@ -11,7 +11,7 @@ public class CeasarShift {
         InputParsing.Argument[] args = parse(argTokens,
                 new InputParsing.Argument[]
                         { new InputParsing.Argument("shift", 's', String.class, null),
-                        new InputParsing.Argument("reverse", 'r', null, false) }
+                        new InputParsing.Argument("decrypt", 'd', null, false) }
         );
 //        if (moduleArgs.length != 2) {
 //            throw new IllegalArgumentException("Usage: ceasarshift <shift letter|number> <reverse>");
