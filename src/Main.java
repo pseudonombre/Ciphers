@@ -89,6 +89,8 @@ public class Main {
         MODULES.put("vigenerecosetshift", VigenereCosetShift::function);
         MODULES.put("vigenere", Vigenere::function);
         MODULES.put("splitwords", SplitWords::function);
+        MODULES.put("affine", Affine::function);
+        MODULES.put("asnums", AsNumbers::function);
         MODULES.put("read", Read::function);
         MODULES.put("write", Write::function);
 
